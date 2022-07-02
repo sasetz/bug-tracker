@@ -58,7 +58,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project): Response
     {
-        return response('', 200);
+        return response('', Response::HTTP_OK);
     }
 
     /**
@@ -71,6 +71,6 @@ class ProjectController extends Controller
     public function destroy(Project $project): Response
     {
         $project->deleteOrFail();
-        return response('', 200);
+        return response('', Response::HTTP_OK);
     }
 }

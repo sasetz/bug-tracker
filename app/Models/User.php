@@ -48,9 +48,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class, 'owner_id');
     }
-    
+
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)->withPivot('is_admin')->withTimestamps();
+    }
+
+    public function isAdmin(Project $project): bool
+    {
+        return $this->ownedProjects()->get()->contains($project) || 
+            ($project->users->find($this) != null && $project->users->find($this)->pivot->is_admin === 1);
+    }
+
+    public function isOwner(Project $project): bool
+    {
+        return $this->ownedProjects()->get()->contains($project);
     }
 }

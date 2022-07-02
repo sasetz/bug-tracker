@@ -26,6 +26,7 @@ class Project extends Model
     
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withTimestamps()->withPivot('is_admin');
+        return $this->belongsToMany(User::class, 'project_user')
+            ->withTimestamps()->withPivot('is_admin');
     }
 }

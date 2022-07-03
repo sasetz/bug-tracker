@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Policies\ProjectPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -15,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Project::class => ProjectPolicy::class,
     ];
 
     /**
@@ -29,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
         
         Gate::define('update-project', function (User $user, Project $project) {
             return $user->isAdmin($project);
+        });
+        
+        Gate::define('view-project', function (User $user, Project $project) {
+            return $user->isAdded($project);
         });
     }
 }

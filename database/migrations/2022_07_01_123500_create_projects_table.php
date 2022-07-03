@@ -17,6 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string("name");
             $table->text("description")->default("");
+            
+            // true if any user can invite any other user
+            $table->boolean('public')->default(false);
+            
             $table->foreignId('owner_id')->constrained('users');
             $table->timestamps();
         });

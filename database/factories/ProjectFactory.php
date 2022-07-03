@@ -23,11 +23,27 @@ class ProjectFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name'  => fake()->sentence(3),
-            'description' => fake()->text(),
+            'name'          => fake()->sentence(3),
+            'description'   => fake()->text(),
+            'public'        => false,
         ];
+    }
+
+    /**
+     * Indicate that users from the current project can add others
+     * without a permission
+     * 
+     * @return ProjectFactory
+     */
+    public function publicize(): ProjectFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'public' => true,
+            ];
+        });
     }
 }

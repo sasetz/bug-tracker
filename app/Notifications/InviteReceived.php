@@ -2,23 +2,27 @@
 
 namespace App\Notifications;
 
+use App\Models\Invite;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
 
-class InviteReceived extends Notification
+class InviteReceived extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, SerializesModels;
+    
+    public Invite $invite;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Invite $invite)
     {
-        //
+        $this->invite = $invite;
     }
 
     /**
@@ -27,18 +31,18 @@ class InviteReceived extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via(mixed $notifiable): array
     {
-        return ['mail'];
+        return ['database'];
     }
 
     /**
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
-    public function toMail($notifiable)
+    public function toMail(mixed $notifiable): MailMessage
     {
         return (new MailMessage)
                     ->line('The introduction to the notification.')
@@ -52,10 +56,14 @@ class InviteReceived extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray(mixed $notifiable): array
     {
         return [
-            //
+            'type' => 'invite',
+            'message' => __('notifications.invite_received', [
+                'name' => $this->invite->user->name,
+                'project' => $this->invite->project->name,
+            ]),
         ];
     }
 }

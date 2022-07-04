@@ -17,6 +17,8 @@ class Project extends Model
     ];
 
     /**
+     * Owner of the project
+     * 
      * @return BelongsTo
      */
     public function owner(): BelongsTo

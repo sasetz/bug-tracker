@@ -50,13 +50,32 @@ class User extends Authenticatable
 
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class)->withPivot('is_admin')->withTimestamps();
+        return $this->belongsToMany(Project::class)
+            ->withPivot('is_admin')
+            ->withTimestamps();
     }
+    
+    public function receivedInvites(): HasMany
+    {
+        return $this->hasMany(Invite::class, 'receiver_id');
+    }
+
+    public function sentInvites(): HasMany
+    {
+        return $this->hasMany(Invite::class, 'user_id');
+    }
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Model helpers
+    |--------------------------------------------------------------------------
+    */
 
     public function isAdmin(Project $project): bool
     {
         return $this->ownedProjects()->get()->contains($project) || 
-            ($project->users->find($this) != null && $project->users->find($this)->pivot->is_admin === 1);
+            ($project->users->find($this) != null && 
+                $project->users->find($this)->pivot->is_admin === 1);
     }
 
     public function isOwner(Project $project): bool
@@ -66,6 +85,7 @@ class User extends Authenticatable
     
     public function isAdded(Project $project): bool
     {
-        return $this->isAdmin($project) || $project->users()->get()->contains($this);
+        return $this->isAdmin($project) || 
+            $project->users()->get()->contains($this);
     }
 }

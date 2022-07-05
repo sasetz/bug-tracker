@@ -67,4 +67,23 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return response('OK');
     }
+
+    /**
+     * Confirm the password again
+     * 
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function password(Request $request): RedirectResponse
+    {
+        if (! Hash::check($request->password, $request->user()->password)) {
+            return back()->withErrors([
+                'password' => [__('auth.password')],
+            ]);
+        }
+
+        $request->session()->passwordConfirmed();
+
+        return redirect()->intended();
+    }
 }

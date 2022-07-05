@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    /**
-     * Create a new instance of the controller
-     */
-    public function __construct()
-    {
-
-        $this->authorizeResource(User::class, 'user');
-    }
-
     /**
      * Display information about the currently logged-in user.
      * 
@@ -43,14 +39,29 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateUserRequest $request
      * @return Response
+     * @throws AuthorizationException
      */
-    public function update(Request $request): Response
+    public function update(UpdateUserRequest $request): Response
     {
         $user = $request->user();
         $user->fill($request->all());
         $user->save();
+        return response('OK');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response|Application|ResponseFactory
+     */
+    public function destroy(Request $request): Response|Application|ResponseFactory
+    {
+        $user = $request->user();
+        Auth::logout();
+        $user->deleteOrFail();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return response('OK');
     }
 }

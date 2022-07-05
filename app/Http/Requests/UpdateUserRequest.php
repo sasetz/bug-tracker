@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
-class RegistrationRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,9 +15,9 @@ class RegistrationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'name' => 'string|max:255',
+            'email' => 'email|unique:users,email',
+            'password' => [Password::defaults(), 'confirmed'],
         ];
     }
 }

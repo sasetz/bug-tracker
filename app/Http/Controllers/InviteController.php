@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Resources\InviteResource;
 use App\Models\Invite;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Throwable;
 
@@ -18,6 +19,7 @@ class InviteController extends Controller
      *
      * @param Request $request
      * @return AnonymousResourceCollection
+     * @throws AuthorizationException
      */
     public function index(Request $request): AnonymousResourceCollection
     {
@@ -37,9 +39,11 @@ class InviteController extends Controller
      *
      * @param StoreInviteRequest $request
      * @return Response
+     * @throws AuthorizationException
      */
     public function store(StoreInviteRequest $request): Response
     {
+        $this->authorize('create', $request->input('project_id'));
         $invite = new Invite;
         $invite->fill($request->all());
         $invite->user_id = $request->user()->id();
@@ -52,9 +56,11 @@ class InviteController extends Controller
      *
      * @param Invite $invite
      * @return InviteResource
+     * @throws AuthorizationException
      */
     public function show(Invite $invite): InviteResource
     {
+        $this->authorize('view', $invite);
         return new InviteResource($invite);
     }
 
@@ -67,6 +73,7 @@ class InviteController extends Controller
      */
     public function destroy(Invite $invite): Response
     {
+        $this->authorize('delete', $invite);
         $invite->deleteOrFail();
         return response('OK');
     }

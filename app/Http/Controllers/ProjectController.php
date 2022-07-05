@@ -7,9 +7,9 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Request;
 use Throwable;
 
 class ProjectController extends Controller
@@ -36,12 +36,14 @@ class ProjectController extends Controller
      * @param StoreProjectRequest $request
      * @return Response
      */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreProjectRequest $request): Response
     {
         $project = Project::create($request->all());
         $project->owner()->associate($request->user());
+        $project->users()->attach($request->user());
+        $project->users->find($request->user())->pivot->is_admin = 1;
         $project->save();
-        return response('OK', Response::HTTP_CREATED);
+        return response('OK');
     }
 
     /**

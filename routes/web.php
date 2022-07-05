@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InviteController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +18,96 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+/*
+|--------------------------------------------------------------------------
+| Auth Routes
+|--------------------------------------------------------------------------
+ */
+
+Route::post('/login', [AuthController::class, 'login'])->name('user.login');
+Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware(['auth'])
+    ->name('user.logout');
+Route::post('/confirm-password', [AuthController::class, 'password'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('password.confirm');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | SPA Routes
+    |--------------------------------------------------------------------------
+     */
+    
+    Route::get('/dashboard', function () {
+        return 'React here';
+    })->name('dashboard');
+    
+    Route::get('/confirm-password', function () {
+        return 'React here';
+    })->name('password.confirm');
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification Routes
+    |--------------------------------------------------------------------------
+     */
+    
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect()->route('dashboard');
+    })->middleware(['signed'])->name('verification.verify');
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect('/home');
+    })->middleware(['signed'])->name('verification.verify');
+    
+    /*
+    |--------------------------------------------------------------------------
+    | User Rest Routes
+    |--------------------------------------------------------------------------
+     */
+    
+    Route::get('/user', [UserController::class, 'self'])->name('user.self');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('user.show');
+    Route::patch('/user', [UserController::class, 'update'])
+        ->middleware(['password.confirm'])
+        ->name('user.update');
+    Route::delete('/user', [UserController::class, 'destroy'])
+        ->middleware(['password.confirm'])
+        ->name('user.destroy');
+});
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function() {
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Invites Rest Routes
+    |--------------------------------------------------------------------------
+     */
+    
+    Route::get('/invites', [InviteController::class, 'index'])->name('invite.index');
+    Route::post('/invites', [InviteController::class, 'store'])->name('invite.store');
+    Route::get('/invites/{invite}', [InviteController::class, 'show'])->name('invite.show');
+    Route::delete('/invites/{invite}', [InviteController::class, 'destroy'])->name('invite.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Projects Rest Routes
+    |--------------------------------------------------------------------------
+     */
+    
+    Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
+    Route::patch('/projects/{project}', [ProjectController::class, 'update'])->name('project.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])
+        ->middleware(['password.confirmed'])
+        ->name('project.destroy');
+    Route::get('/projects/{project}/users', [ProjectController::class, 'users'])->name('project.users');
 });

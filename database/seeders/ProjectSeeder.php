@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Invite;
+use App\Models\Project;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class InviteSeeder extends Seeder
+class ProjectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,8 +15,8 @@ class InviteSeeder extends Seeder
      */
     public function run()
     {
-        Invite::factory()
-            ->count(15)
+        Project::factory()
+            ->count(10)
             ->create();
     }
 }

@@ -2,10 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Invite;
+use App\Models\Project;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Invite>
+ * @extends Factory
  */
 class InviteFactory extends Factory
 {
@@ -16,8 +19,12 @@ class InviteFactory extends Factory
      */
     public function definition()
     {
+        $project = Project::factory()->create();
         return [
-            //
+            'user_id'       => $project->owner->id,
+            'receiver_id'   => User::factory()->create(),
+            'project_id'    => $project,
+            'accepted'      => null,
         ];
     }
 }

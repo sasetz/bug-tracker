@@ -4,18 +4,18 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreInviteRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'receiver_id' => 'required|exists:users,id',
-            'project_id' => 'required|exists:projects,id',
+            'email' => 'required|email',
+            'password' => 'required|'
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserResource;
 use App\Models\Project;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -40,7 +41,7 @@ class ProjectController extends Controller
         $project = Project::create($request->all());
         $project->owner()->associate($request->user());
         $project->save();
-        return response("", Response::HTTP_CREATED);
+        return response('OK', Response::HTTP_CREATED);
     }
 
     /**
@@ -63,7 +64,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project): Response
     {
-        return response('', Response::HTTP_OK);
+        return response('OK');
     }
 
     /**
@@ -76,6 +77,18 @@ class ProjectController extends Controller
     public function destroy(Project $project): Response
     {
         $project->deleteOrFail();
-        return response('', Response::HTTP_OK);
+        return response('OK');
+    }
+
+    /**
+     * List all users in the project
+     * 
+     * @param Project $project
+     * @return AnonymousResourceCollection
+     * @throws Throwable
+     */
+    public function users(Project $project): AnonymousResourceCollection
+    {
+        return UserResource::collection($project->users->get()->concat($project->owner()->get()));
     }
 }

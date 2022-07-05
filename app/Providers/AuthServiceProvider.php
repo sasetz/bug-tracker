@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Invite;
 use App\Models\Project;
 use App\Models\User;
+use App\Policies\InvitePolicy;
 use App\Policies\ProjectPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Password;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,6 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Project::class => ProjectPolicy::class,
+        Invite::class => InvitePolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -27,13 +33,13 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        
-        Gate::define('update-project', function (User $user, Project $project) {
-            return $user->isAdmin($project);
-        });
-        
-        Gate::define('view-project', function (User $user, Project $project) {
-            return $user->isAdded($project);
-        });
+
+        Password::defaults(function () {
+            $rule = Password::min(8);
+
+            return $this->app->isProduction()
+                ? $rule->mixedCase()->numbers()->symbols()->uncompromised()
+                : $rule;
+        }); 
     }
 }

@@ -48,18 +48,6 @@ class InvitePolicy
     }
 
     /**
-     * Determine whether the user can update the model.
-     *
-     * @param User $user
-     * @param Invite $invite
-     * @return Response|bool
-     */
-    public function update(User $user, Invite $invite): Response|bool
-    {
-        return false;
-    }
-
-    /**
      * Determine whether the user can delete the model.
      *
      * @param User $user

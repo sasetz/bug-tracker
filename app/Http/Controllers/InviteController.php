@@ -3,63 +3,71 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInviteRequest;
-use App\Http\Requests\UpdateInviteRequest;
+use App\Http\Resources\InviteResource;
 use App\Models\Invite;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Request;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Throwable;
 
 class InviteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List all received invitations
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request): AnonymousResourceCollection
     {
-        //
+        if ($request->input('received') === false) {
+            $invites = collect();
+        } else {
+            $invites = collect($request->user()->receivedInvites()->get());
+        }
+        if ($request->input('sent') === true) {
+            $invites = $invites->concat($request->user()->sentInvites()->get());
+        }
+        return InviteResource::collection($invites);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreInviteRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreInviteRequest $request
+     * @return Response
      */
-    public function store(StoreInviteRequest $request)
+    public function store(StoreInviteRequest $request): Response
     {
-        //
+        $invite = new Invite;
+        $invite->fill($request->all());
+        $invite->user_id = $request->user()->id();
+        $invite->save();
+        return response('OK', SymfonyResponse::HTTP_CREATED);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
+     * @param Invite $invite
+     * @return InviteResource
      */
-    public function show(Invite $invite)
+    public function show(Invite $invite): InviteResource
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateInviteRequest  $request
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateInviteRequest $request, Invite $invite)
-    {
-        //
+        return new InviteResource($invite);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
+     * @param Invite $invite
+     * @return Response
+     * @throws Throwable
      */
-    public function destroy(Invite $invite)
+    public function destroy(Invite $invite): Response
     {
-        //
+        $invite->deleteOrFail();
+        return response('OK');
     }
 }

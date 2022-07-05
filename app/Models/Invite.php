@@ -10,6 +10,11 @@ class Invite extends Model
 {
     use HasFactory;
     
+    protected $fillable = [
+        'receiver_id',
+        'project_id',
+    ];
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

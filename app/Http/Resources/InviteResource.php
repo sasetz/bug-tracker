@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JsonSerializable;
 
-class ProjectResource extends JsonResource
+class InviteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,10 +19,10 @@ class ProjectResource extends JsonResource
     {
         return [
             'id'            => $this->id,
-            'name'          => $this->name,
-            'description'   => $this->description,
-            'public'        => $this->public,
-            'owner'         => new UserResource($this->owner()),
+            'sender'        => new UserResource($this->user),
+            'receiver'      => new UserResource($this->receiver),
+            'project'       => new ProjectResource($this->project),
+            'accepted'      => $this->accepted,
         ];
     }
 }

@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use App\Preferences\HasPreferences;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, HasPreferences;
     
     protected $fillable = [
         'name',
@@ -30,5 +32,10 @@ class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_user')
             ->withTimestamps()->withPivot('is_admin');
+    }
+    
+    public function preferences(): HasMany
+    {
+        return $this->hasMany(ProjectPreference::class, 'project_id');
     }
 }

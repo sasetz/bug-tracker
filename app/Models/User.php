@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Preferences\HasPreferences;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasPreferences;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,20 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+    ];
+
+    /**
+     * An array that represents what preferences a model has
+     * and what are the default values on that model
+     * 
+     * @var string[]
+     */
+    protected array $preferencesDefaults = [
+        'language' => 'en',
+        'notification_channels' => [
+            'email',
+            'database',
+        ],
     ];
 
     /**

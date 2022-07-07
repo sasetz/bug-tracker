@@ -15,9 +15,8 @@ use Illuminate\Database\Eloquent\Collection;
  * | the scale of this application, so there is no need to store validation
  * | data on a separate table, what possible choices it has, etc.
  * 
- * todo: use one preference table and model for all models that use preferences
- * todo: implement a system similar to notifications in base Laravel
  */
+
 trait HasPreferences
 {
     protected array $preferencesDefaults;
@@ -39,11 +38,14 @@ trait HasPreferences
 
     public function setPreference(string $name, string|array $value): void
     {
+        // if the preference comes to default, reset it
         if ($this->preferencesDefaults[$name] === $value) {
             $this->resetPreference($name);
             return;
         }
 
+        // check what the database contains
+        // if there are no records, create them
         $preference = $this->toNormal($this->preferences->where('name', $name)->get());
         if ($preference == null) {
             if (is_array($value)) {
@@ -55,6 +57,7 @@ trait HasPreferences
             }
         }
 
+        // if the table contains an array of preferences, reset and then rewrite them
         if (is_array($preference)) {
             $this->resetPreference($name);
             if (is_array($value))
@@ -63,15 +66,36 @@ trait HasPreferences
                 }
             else
                 $this->preferences()->create(['name' => $name, 'value' => $value]);
-            return;
         }
 
-        
+        // if there are only one preference in the database
+        $current_preference = $this->preferences->first();
+        if (is_array($value)) {
+            $current_preference->value = $value[0];
+            for ($i = 1; $i < count($value); $i++) {
+                $this->preferences()->create(['name' => $name, 'value' => $value[$i]]);
+            }
+        } else {
+            $current_preference->value = $value;
+        }
+        $current_preference->save();
     }
 
-    public function appendPreference(string $name, string $value): void
+    public function appendPreference(string $name, string|array $value): void
     {
-
+        if (!is_array($value))
+            $this->preferences->create([
+                'name' => $name,
+                'value' => $value,
+            ]);
+        else {
+            foreach ($value as $item) {
+                $this->preferences->create([
+                    'name' => $name,
+                    'value' => $item,
+                ]);
+            }
+        }
     }
 
     public function resetPreference(string $name): void

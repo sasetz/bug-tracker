@@ -11,6 +11,12 @@ class Label extends Model
 {
     use HasFactory;
     
+    protected $fillable = [
+        'name',
+        'description',
+        'color',
+    ];
+    
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);

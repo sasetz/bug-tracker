@@ -4,62 +4,85 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLabelRequest;
 use App\Http\Requests\UpdateLabelRequest;
+use App\Http\Resources\LabelResource;
 use App\Models\Label;
+use App\Models\Project;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
+use Throwable;
 
 class LabelController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Label::class, 'label');
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Project $project
+     * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(Project $project): AnonymousResourceCollection
     {
-        //
+        return LabelResource::collection($project->labels()->paginate());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreLabelRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreLabelRequest $request
+     * @return Response
      */
-    public function store(StoreLabelRequest $request)
+    public function store(StoreLabelRequest $request, Project $project)
     {
-        //
+        $label = new Label();
+        $label->project_id = $project->id;
+        $label->fill($request->all());
+        $label->save();
+        
+        return response('OK');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Label  $label
-     * @return \Illuminate\Http\Response
+     * @param Label $label
+     * @return LabelResource|Response
      */
-    public function show(Label $label)
+    public function show(Label $label): Response|LabelResource
     {
-        //
+        return new LabelResource($label);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateLabelRequest  $request
-     * @param  \App\Models\Label  $label
-     * @return \Illuminate\Http\Response
+     * @param UpdateLabelRequest $request
+     * @param Label $label
+     * @return Response
      */
-    public function update(UpdateLabelRequest $request, Label $label)
+    public function update(UpdateLabelRequest $request, Label $label): Response
     {
-        //
+        $label->fill($request->all());
+        $label->save();
+        
+        return response('OK');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Label  $label
-     * @return \Illuminate\Http\Response
+     * @param Label $label
+     * @return Response
+     * @throws Throwable
      */
-    public function destroy(Label $label)
+    public function destroy(Label $label): Response
     {
-        //
+        $label->deleteOrFail();
+        
+        return response('OK');
     }
 }

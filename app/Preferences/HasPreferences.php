@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 trait HasPreferences
 {
-    protected array $preferencesDefaults;
+    protected array $preferencesDefaults = [];
 
     /**
      * Get preference value. Returns either a string value,

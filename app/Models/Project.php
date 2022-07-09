@@ -38,4 +38,19 @@ class Project extends Model
     {
         return $this->hasMany(ProjectPreference::class, 'project_id');
     }
+    
+    public function labels(): HasMany
+    {
+        return $this->hasMany(Label::class);
+    }
+    
+    public function priorities(): HasMany
+    {
+        return $this->hasMany(Priority::class);
+    }
+    
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

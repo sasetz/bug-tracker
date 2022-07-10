@@ -2,20 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\InProject;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTicketRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,7 +15,13 @@ class UpdateTicketRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'string|max:255',
+            'label_ids' => 'array',
+            'label_ids.*' => 'exists:labels,id',
+            'assignee_ids' => 'array',
+            'assignee_ids.*' => ['exists:users,id', new InProject($this->route('ticket')->project)],
+            'status_id' => 'exists:statuses,id',
+            'priority_id' => 'exists:priorities,id',
         ];
     }
 }

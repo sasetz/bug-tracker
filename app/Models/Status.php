@@ -10,6 +10,18 @@ class Status extends Model
 {
     use HasFactory;
     
+    /*****************************************
+     * 
+     * Status IDS:
+     * 
+     * - Open --------> 1
+     * - Closed ------> 2
+     * - Ignored -----> 3
+     * 
+     * 
+     *****************************************
+     */
+    
     protected $fillable = [
         'name',
     ];

@@ -2,20 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\InProject;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTicketRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return false;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,7 +15,13 @@ class StoreTicketRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'message' => 'string',
+            'label_ids' => 'required|array',
+            'label_ids.*' => 'exists:labels,id',
+            'assignee_ids' => 'array',
+            'assignee_ids.*' => ['exists:users,id', new InProject($this->route('ticket')->project)],
+            'priority_id' => 'required|exists:priorities,id',
         ];
     }
 }

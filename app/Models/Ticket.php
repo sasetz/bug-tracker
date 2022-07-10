@@ -11,6 +11,11 @@ class Ticket extends Model
 {
     use HasFactory;
     
+    protected $fillable = [
+        'name',
+        'priority_id',
+    ];
+    
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
@@ -41,5 +46,10 @@ class Ticket extends Model
         return $this->belongsToMany(User::class, 'assignees')
             ->withTimestamps()
             ->as('assigned');
+    }
+    
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class);
     }
 }

@@ -18,7 +18,7 @@ class StatusPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,22 +30,26 @@ class StatusPolicy
      */
     public function view(User $user, Status $status)
     {
-        //
+        return true;
     }
 
     /**
      * Determine whether the user can create models.
+     * No user can create a new status, may be later implemented as only
+     * app-admins feature.
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function create(User $user)
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
+     * Same as creating a status, no one can do that, only from console
+     * or later as an app-admin.
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Status  $status
@@ -53,7 +57,7 @@ class StatusPolicy
      */
     public function update(User $user, Status $status)
     {
-        //
+        return false;
     }
 
     /**
@@ -65,7 +69,7 @@ class StatusPolicy
      */
     public function delete(User $user, Status $status)
     {
-        //
+        return false;
     }
 
     /**
@@ -77,7 +81,7 @@ class StatusPolicy
      */
     public function restore(User $user, Status $status)
     {
-        //
+        return false;
     }
 
     /**
@@ -89,6 +93,6 @@ class StatusPolicy
      */
     public function forceDelete(User $user, Status $status)
     {
-        //
+        return false;
     }
 }

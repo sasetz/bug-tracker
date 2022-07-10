@@ -2,64 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreStatusRequest;
-use App\Http\Requests\UpdateStatusRequest;
+use App\Http\Resources\StatusResource;
 use App\Models\Status;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class StatusController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return AnonymousResourceCollection|Response
      */
-    public function index()
+    public function index(): Response|AnonymousResourceCollection
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreStatusRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreStatusRequest $request)
-    {
-        //
+        return StatusResource::collection(Status::paginate());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
+     * @param Status $status
+     * @return StatusResource|Response
      */
-    public function show(Status $status)
+    public function show(Status $status): Response|StatusResource
     {
-        //
+        return new StatusResource($status);
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateStatusRequest  $request
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateStatusRequest $request, Status $status)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Status $status)
-    {
-        //
-    }
+    
 }

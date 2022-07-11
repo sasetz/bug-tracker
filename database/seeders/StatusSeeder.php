@@ -14,16 +14,19 @@ class StatusSeeder extends Seeder
      */
     public function run()
     {
-        Status::firstOrCreate([
-            'name' => 'Open',
-        ]);
+        if (!Status::where('name', 'Open')->first())
+            Status::create([
+                'name' => 'Open',
+            ]);
 
-        Status::firstOrCreate([
-            'name' => 'Closed',
-        ]);
-        
-        Status::firstOrCreate([
-            'name' => 'Ignored',
-        ]);
+        if (!Status::where('name', 'Closed')->first())
+            Status::create([
+                'name' => 'Closed',
+            ]);
+
+        if (!Status::where('name', 'Ignored')->first())
+            Status::create([
+                'name' => 'Ignored',
+            ]);
     }
 }

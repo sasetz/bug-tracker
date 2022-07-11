@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
@@ -110,4 +111,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
         ->middleware(['password.confirmed'])
         ->name('project.destroy');
     Route::get('/projects/{project}/users', [ProjectController::class, 'users'])->name('project.users');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Updates Rest Routes
+    |--------------------------------------------------------------------------
+     */
+
+    Route::get('/tickets/{ticket}/updates', [UpdateController::class, 'index'])->name('update.index');
+    Route::get('/updates/{update}', [UpdateController::class, 'show'])->name('update.show');
 });

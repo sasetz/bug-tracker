@@ -19,7 +19,7 @@ class ProjectPreferenceFactory extends Factory
     public function definition()
     {
         return [
-            'project_id' => Project::factory()->create(),
+            'project_id' => Project::factory(),
             'name' => fake()->slug(),
             'value' => fake()->slug(),
         ];

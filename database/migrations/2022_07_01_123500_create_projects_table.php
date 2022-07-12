@@ -21,7 +21,7 @@ return new class extends Migration
             // true if any user can invite any other user
             $table->boolean('public')->default(false);
             
-            $table->foreignId('owner_id')->constrained('users');
+            $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

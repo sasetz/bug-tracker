@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('label_ticket', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('label_id')->constrained();
-            $table->foreignId('ticket_id')->constrained();
+            $table->foreignId('label_id')->constrained()->onDelete('cascade');
+            $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
         });
     }
 

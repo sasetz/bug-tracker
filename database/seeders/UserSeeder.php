@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
     {
         User::factory()
             ->count(25)
-            ->has(Project::factory()->count(3), 'ownedProjects')
             ->create();
     }
 }

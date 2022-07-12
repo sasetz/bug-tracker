@@ -26,6 +26,8 @@ class Status extends Model
         'name',
     ];
     
+    public $timestamps = false;
+    
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);

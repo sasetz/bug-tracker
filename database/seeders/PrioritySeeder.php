@@ -16,6 +16,9 @@ class PrioritySeeder extends Seeder
      */
     public function run()
     {
-        Project::factory()->has(Priority::factory()->count(7)->create())->create();
+        Priority::factory()
+            ->count(7)
+            ->for(Project::factory())
+            ->create();
     }
 }

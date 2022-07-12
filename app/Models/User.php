@@ -99,7 +99,7 @@ class User extends Authenticatable implements MustVerifyEmail
     
     public function assignedTickets(): BelongsToMany
     {
-        return $this->belongsToMany(Ticket::class, 'assignees')
+        return $this->belongsToMany(Ticket::class, 'ticket_assignees')
             ->withTimestamps()
             ->as('assigned');
     }

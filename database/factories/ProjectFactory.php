@@ -30,7 +30,7 @@ class ProjectFactory extends Factory
             'name'          => fake()->sentence(3),
             'description'   => fake()->text(),
             'public'        => fake()->boolean(),
-            'owner_id'       => User::factory()->create(),
+            'owner_id'       => User::factory(),
         ];
     }
 

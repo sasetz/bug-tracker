@@ -17,7 +17,6 @@ class UpdateFactory extends Factory
     public function definition()
     {
         return [
-            //
         ];
     }
 }

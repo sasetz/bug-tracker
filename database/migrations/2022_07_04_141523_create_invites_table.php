@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('receiver_id')->constrained('users');
-            $table->foreignId('project_id')->constrained('projects');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->boolean('accepted')->nullable();
             $table->timestamps();
         });

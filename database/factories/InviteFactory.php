@@ -19,11 +19,7 @@ class InviteFactory extends Factory
      */
     public function definition()
     {
-        $project = Project::factory()->create();
         return [
-            'user_id'       => $project->owner->id,
-            'receiver_id'   => User::factory()->create(),
-            'project_id'    => $project,
             'accepted'      => null,
         ];
     }

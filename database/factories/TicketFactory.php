@@ -19,6 +19,7 @@ class TicketFactory extends Factory
         return [
             'name' => fake()->sentence(),
             'number' => fake()->numberBetween(0, 100),
+            // status-id
             'status_id' => 1,
         ];
     }

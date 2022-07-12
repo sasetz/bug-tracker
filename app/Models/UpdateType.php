@@ -14,6 +14,8 @@ class UpdateType extends Model
         'name',
     ];
     
+    public $timestamps = false;
+    
     public function updates(): HasMany
     {
         return $this->hasMany(Update::class, 'update_type_id');

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('project_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('project_id')->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->boolean('is_admin')->default(false);
             $table->timestamps();
         });

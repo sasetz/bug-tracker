@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('number');
-            $table->foreignId('author_id')->constrained('users');
-            $table->foreignId('project_id')->constrained();
-            $table->foreignId('priority_id')->constrained();
-            $table->foreignId('status_id')->constrained();
+            $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
+            $table->foreignId('priority_id')->constrained()->onDelete('cascade');
+            $table->foreignId('status_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

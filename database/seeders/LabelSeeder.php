@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Label;
+use App\Models\Project;
 use Illuminate\Database\Seeder;
 
 class LabelSeeder extends Seeder
@@ -14,6 +15,9 @@ class LabelSeeder extends Seeder
      */
     public function run()
     {
-        Label::factory()->count(15)->create();
+        Label::factory()
+            ->count(5)
+            ->for(Project::factory())
+            ->create();
     }
 }

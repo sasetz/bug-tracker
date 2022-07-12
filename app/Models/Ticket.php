@@ -44,7 +44,7 @@ class Ticket extends Model
     
     public function assignees(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'assignees')
+        return $this->belongsToMany(User::class, 'ticket_assignees')
             ->withTimestamps()
             ->as('assigned');
     }

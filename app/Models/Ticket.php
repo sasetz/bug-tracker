@@ -58,4 +58,9 @@ class Ticket extends Model
     {
         return $this->hasMany(TitleChange::class);
     }
+    
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

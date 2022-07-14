@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Ticket;
-use App\Models\TitleChange;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class TitleChangeSeeder extends Seeder
+class CommentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -30,7 +30,7 @@ class TitleChangeSeeder extends Seeder
                     ->for(Priority::factory()->for($project))
                     ->has(Label::factory()->for($project))
                     ->has(
-                        TitleChange::factory()
+                        Comment::factory()
                             ->for(User::factory())
                     )
                     ->create();
@@ -38,7 +38,7 @@ class TitleChangeSeeder extends Seeder
                 $tickets->each(function ($ticket) use ($project, $user) {
                     $ticket->subscribers()->attach($user);
                     $ticket->assignees()->attach($user);
-                    $project->users()->attach($ticket->titleChanges->first()->user);
+                    $project->users()->attach($ticket->comments->first()->user);
                 });
             }
         }

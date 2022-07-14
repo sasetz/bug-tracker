@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Update>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TitleChange>
  */
-class UpdateFactory extends Factory
+class TitleChangeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,6 +17,8 @@ class UpdateFactory extends Factory
     public function definition()
     {
         return [
+            'old' => fake()->sentence(),
+            'new' => fake()->sentence(),
         ];
     }
 }

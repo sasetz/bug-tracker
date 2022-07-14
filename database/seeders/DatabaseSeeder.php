@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             StatusSeeder::class,
-            UpdateTypeSeeder::class,
             
             ProjectSeeder::class,
         ]);

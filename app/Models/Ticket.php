@@ -63,4 +63,9 @@ class Ticket extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    
+    public function statusChanges(): HasMany
+    {
+        return $this->hasMany(StatusChange::class);
+    }
 }

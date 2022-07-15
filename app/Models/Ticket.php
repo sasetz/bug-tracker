@@ -68,4 +68,19 @@ class Ticket extends Model
     {
         return $this->hasMany(StatusChange::class);
     }
+    
+    public function priorityChanges(): HasMany
+    {
+        return $this->hasMany(PriorityChange::class);
+    }
+    
+    public function assigneeChanges(): HasMany
+    {
+        return $this->hasMany(AssigneeChange::class);
+    }
+
+    public function labelChanges(): HasMany
+    {
+        return $this->hasMany(LabelChange::class);
+    }
 }

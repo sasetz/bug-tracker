@@ -26,11 +26,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
  */
 
-Route::post('/login', [AuthController::class, 'login'])->name('user.login');
-Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware(['auth'])
-    ->name('user.logout');
+    ->name('logout');
 Route::post('/confirm-password', [AuthController::class, 'password'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('password.confirm');

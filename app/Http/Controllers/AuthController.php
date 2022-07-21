@@ -62,7 +62,9 @@ class AuthController extends Controller
      */
     public function logout(Request $request): Response
     {
-        Auth::logout();
+        // finish the logout after creating an SPA
+        Auth::guard('web')->logout();
+//        auth('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return response('OK');
@@ -84,6 +86,6 @@ class AuthController extends Controller
 
         $request->session()->passwordConfirmed();
 
-        return redirect()->intended();
+        return redirect()->intended('dashboard');
     }
 }

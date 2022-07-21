@@ -26,13 +26,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
  */
 
+Route::get('/', function () {
+    return 'guest dashboard goes here';
+})->name('home');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware(['auth'])
     ->name('logout');
 Route::post('/confirm-password', [AuthController::class, 'password'])
-    ->middleware(['auth', 'throttle:6,1'])
+    ->middleware(['auth:sanctum', 'throttle:6,1'])
     ->name('password.confirm');
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -65,7 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
-        return redirect('/home');
+        return redirect()->route('dashboard');
     })->middleware(['signed'])->name('verification.verify');
     
     /*

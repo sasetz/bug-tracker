@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Models\Project;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -92,5 +94,28 @@ class ProjectController extends Controller
     public function users(Project $project): AnonymousResourceCollection
     {
         return UserResource::collection($project->users->get()->concat($project->owner()->get()));
+    }
+
+    /**
+     * Make a user admin
+     * 
+     * @param Project $project
+     * @param User $user
+     * @return Response
+     * @throws AuthorizationException
+     */
+    public function makeAdmin(Project $project, User $user): Response
+    {
+        $this->authorize('update', $project);
+        
+        if(!$user->isAdded($project)) {
+            return response('', 403);
+        }
+        
+        $pivot = $project->users->find($user)->pivot;
+        $pivot->is_admin = 1;
+        $pivot->save();
+        
+        return response('OK');
     }
 }

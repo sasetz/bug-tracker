@@ -113,6 +113,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
         ->middleware(['password.confirmed'])
         ->name('project.destroy');
     Route::get('/projects/{project}/users', [ProjectController::class, 'users'])->name('project.users');
+    Route::post('/projects/{project}/users/{user}/admin', [ProjectController::class, 'makeAdmin'])
+        ->name('project.make_admin');
 
     /*
     |--------------------------------------------------------------------------

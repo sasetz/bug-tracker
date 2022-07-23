@@ -69,4 +69,17 @@ class ProjectPolicy
     {
         return $user->isOwner($project);
     }
+
+    /**
+     * Determine whether the user can add a new admin
+     * to the project
+     * 
+     * @param User $user
+     * @param Project $project
+     * @return bool
+     */
+    public function makeAdmin(User $user, Project $project): bool
+    {
+        return $user->isOwner($project);
+    }
 }

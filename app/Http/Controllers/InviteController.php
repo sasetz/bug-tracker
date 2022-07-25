@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Resources\InviteResource;
 use App\Models\Invite;
+use App\Models\Project;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Throwable;
 
 class InviteController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource();
+    }
+
     /**
      * List all received invitations
      *
@@ -43,12 +48,12 @@ class InviteController extends Controller
      */
     public function store(StoreInviteRequest $request): Response
     {
-        $this->authorize('create', $request->input('project_id'));
+        $this->authorize('create', Project::find($request->input('project_id')));
         $invite = new Invite;
         $invite->fill($request->all());
-        $invite->user_id = $request->user()->id();
+        $invite->user_id = $request->user()->id;
         $invite->save();
-        return response('OK', SymfonyResponse::HTTP_CREATED);
+        return response('OK');
     }
 
     /**

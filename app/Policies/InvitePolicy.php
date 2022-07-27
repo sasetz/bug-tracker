@@ -47,4 +47,16 @@ class InvitePolicy
     {
         return $invite->user->is($user);
     }
+
+    /**
+     * Determine whether the user can accept or reject the invite.
+     * 
+     * @param User $user
+     * @param Invite $invite
+     * @return bool
+     */
+    public function change_status(User $user, Invite $invite): bool
+    {
+        return $invite->receiver->is($user) && ($invite->accepted == null);
+    }
 }

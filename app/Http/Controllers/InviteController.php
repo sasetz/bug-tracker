@@ -16,7 +16,6 @@ class InviteController extends Controller
 {
     public function __construct()
     {
-        $this->authorizeResource();
     }
 
     /**
@@ -80,6 +79,44 @@ class InviteController extends Controller
     {
         $this->authorize('delete', $invite);
         $invite->deleteOrFail();
+        return response('OK');
+    }
+
+    /**
+     * Accept existing invite.
+     * 
+     * @param Invite $invite
+     * @return Response
+     * @throws AuthorizationException
+     */
+    public function accept(Invite $invite): Response
+    {
+        $this->authorize('change_status', $invite);
+        
+        $invite->accepted = true;
+        $invite->save();
+        
+        // send acceptance notification
+        
+        return response('OK');
+    }
+
+    /**
+     * Reject existing invite.
+     *
+     * @param Invite $invite
+     * @return Response
+     * @throws AuthorizationException
+     */
+    public function reject(Invite $invite): Response
+    {
+        $this->authorize('change_status', $invite);
+
+        $invite->accepted = false;
+        $invite->save();
+        
+        // send rejection notification
+
         return response('OK');
     }
 }

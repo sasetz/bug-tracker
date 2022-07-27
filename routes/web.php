@@ -98,6 +98,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
     Route::post('/invites', [InviteController::class, 'store'])->name('invite.store');
     Route::get('/invites/{invite}', [InviteController::class, 'show'])->name('invite.show');
     Route::delete('/invites/{invite}', [InviteController::class, 'destroy'])->name('invite.destroy');
+    Route::patch('/invites/{invite}/accept', [InviteController::class, 'accept'])->name('invite.accept');
+    Route::patch('/invites/{invite}/reject', [InviteController::class, 'reject'])->name('invite.reject');
 
     /*
     |--------------------------------------------------------------------------

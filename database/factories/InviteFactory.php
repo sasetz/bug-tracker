@@ -20,6 +20,9 @@ class InviteFactory extends Factory
     public function definition()
     {
         return [
+            'user_id'       => User::factory(),
+            'receiver_id'   => User::factory(),
+            'project_id'    => Project::factory(),
             'accepted'      => null,
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreInviteRequest extends FormRequest
@@ -15,7 +16,6 @@ class StoreInviteRequest extends FormRequest
     {
         return [
             'receiver_id' => 'required|exists:users,id',
-            'project_id' => 'required|exists:projects,id',
         ];
     }
 }

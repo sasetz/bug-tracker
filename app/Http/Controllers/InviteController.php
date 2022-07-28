@@ -16,6 +16,7 @@ class InviteController extends Controller
 {
     public function __construct()
     {
+//        $this->authorizeResource(Invite::class, 'invite');
     }
 
     /**
@@ -42,15 +43,17 @@ class InviteController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreInviteRequest $request
+     * @param Project $project
      * @return Response
      * @throws AuthorizationException
      */
-    public function store(StoreInviteRequest $request): Response
+    public function store(StoreInviteRequest $request, Project $project): Response
     {
-        $this->authorize('create', Project::find($request->input('project_id')));
+        $this->authorize('create_invite', $project);
         $invite = new Invite;
         $invite->fill($request->all());
         $invite->user_id = $request->user()->id;
+        $invite->project()->associate($project);
         $invite->save();
         return response('OK');
     }

@@ -82,4 +82,16 @@ class ProjectPolicy
     {
         return $user->isOwner($project);
     }
+
+    /**
+     * Determine if the user can create an invitation to the project.
+     * 
+     * @param User $user
+     * @param Project $project
+     * @return bool
+     */
+    public function create_invite(User $user, Project $project): bool
+    {
+        return $user->isAdmin($project) || $user->isAdded($project) && $project->public == 1;
+    }
 }

@@ -6,7 +6,7 @@ use App\Models\Invite;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Http\Response;
 
 class InvitePolicy
 {
@@ -22,18 +22,6 @@ class InvitePolicy
     public function view(User $user, Invite $invite): Response|bool
     {
         return $invite->user === $user || $invite->receiver === $user;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     *
-     * @param User $user
-     * @param Project $project
-     * @return Response|bool
-     */
-    public function create(User $user, Project $project): Response|bool
-    {
-        return $user->isAdmin($project) || $user->isAdded($project) && $project->public;
     }
 
     /**

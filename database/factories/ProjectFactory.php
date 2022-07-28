@@ -29,22 +29,37 @@ class ProjectFactory extends Factory
         return [
             'name'          => fake()->sentence(3),
             'description'   => fake()->text(),
-            'public'        => fake()->boolean(),
+            'public'        => false,
             'owner_id'       => User::factory(),
         ];
     }
 
     /**
      * Indicate that users from the current project can add others
-     * without a permission
+     * without a permission.
      * 
      * @return ProjectFactory
      */
-    public function publicize(): ProjectFactory
+    public function public(): ProjectFactory
     {
         return $this->state(function (array $attributes) {
             return [
                 'public' => true,
+            ];
+        });
+    }
+
+    /**
+     * Indicate that users from the current project cannot add others
+     * unless they have admins rights
+     *
+     * @return ProjectFactory
+     */
+    public function private(): ProjectFactory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'public' => false,
             ];
         });
     }

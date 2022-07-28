@@ -21,7 +21,6 @@ class InviteSeeder extends Seeder
         $projects = Project::factory()->count(3)->has(User::factory()->count(3))->create();
 
         foreach ($projects as $project) {
-            Log::info($project);
             foreach ($project->users as $user)
                 Invite::factory()
                     ->for($project)

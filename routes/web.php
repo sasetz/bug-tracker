@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -120,10 +121,17 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
 
     /*
     |--------------------------------------------------------------------------
-    | Updates Rest Routes
+    | Tickets Rest Routes
     |--------------------------------------------------------------------------
      */
 
-    Route::get('/tickets/{ticket}/updates', [UpdateController::class, 'index'])->name('update.index');
-    Route::get('/updates/{update}', [UpdateController::class, 'show'])->name('update.show');
+    Route::get('/projects/{project}/tickets', [TicketController::class, 'index'])->name('ticket.index');
+    Route::post('/projects/{project}/tickets', [TicketController::class, 'store'])->name('ticket.store');
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('ticket.show');
+    Route::patch('/tickets/{ticket}', [TicketController::class, 'update'])->name('ticket.update');
+    Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('ticket.destroy');
+    Route::patch('/tickets/{ticket}/subscribe', [TicketController::class, 'subscribe'])
+        ->name('ticket.subscribe');
+    Route::patch('/tickets/{ticket}/unsubscribe', [TicketController::class, 'unsubscribe'])
+        ->name('ticket.unsubscribe');
 });

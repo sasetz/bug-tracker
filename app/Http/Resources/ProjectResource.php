@@ -22,7 +22,7 @@ class ProjectResource extends JsonResource
             'name'          => $this->name,
             'description'   => $this->description,
             'public'        => $this->public,
-            'owner'         => new UserResource($this->owner()),
+            'owner'         => new UserResource($this->owner),
         ];
     }
 }

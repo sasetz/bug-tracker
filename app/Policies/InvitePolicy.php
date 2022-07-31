@@ -21,7 +21,7 @@ class InvitePolicy
      */
     public function view(User $user, Invite $invite): Response|bool
     {
-        return $invite->user === $user || $invite->receiver === $user;
+        return $invite->user->is($user) || $invite->receiver->is($user);
     }
 
     /**

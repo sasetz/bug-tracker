@@ -9,13 +9,14 @@ use JsonSerializable;
 
 class InviteResource extends JsonResource
 {
+    public static $wrap = '';
     /**
      * Transform the resource into an array.
      *
      * @param  Request  $request
-     * @return array|Arrayable|JsonSerializable
+     * @return array
      */
-    public function toArray($request): array|JsonSerializable|Arrayable
+    public function toArray($request): array
     {
         return [
             'id'            => $this->id,

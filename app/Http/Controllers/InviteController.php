@@ -28,15 +28,22 @@ class InviteController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        if ($request->input('received') === false) {
-            $invites = collect();
-        } else {
-            $invites = collect($request->user()->receivedInvites()->get());
+        $invites = Invite::query();
+        $empty = true;
+        if ($request->input('received')) {
+            $invites->orWhere('receiver_id', $request->user()->id);
+            $empty = false;
+        } 
+        if ($request->input('sent')) {
+            $invites->orWhere('user_id', $request->user()->id);
+            $empty = false;
         }
-        if ($request->input('sent') === true) {
-            $invites = $invites->concat($request->user()->sentInvites()->get());
+        
+        // default fallback behavior, if no inputs are specified
+        if($empty) {
+            $invites->orWhere('receiver_id', $request->user()->id);
         }
-        return InviteResource::collection($invites);
+        return InviteResource::collection($invites->paginate());
     }
 
     /**

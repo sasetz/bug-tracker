@@ -9,6 +9,7 @@ use Database\Seeders\InviteSeeder;
 use Database\Seeders\ProjectSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -189,5 +190,41 @@ class InviteTest extends TestCase
             'receiver_id' => $user->id,
             'project_id' => $project->id,
         ]);
+    }
+
+    public function test_view_all_invites()
+    {
+        $user = User::factory()->create();
+        $invites = Invite::factory()->for($user, 'receiver')->count(3)->create();
+        
+        Sanctum::actingAs($user, ['*']);
+        $response = $this->get('/invites');
+
+        $response
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) => 
+                $json->has('data')
+                ->count('data', 3)
+                ->etc()
+            );
+    }
+
+    public function test_view_single_invite()
+    {
+        $user = User::factory()->create();
+        $invites = Invite::factory()->for($user, 'receiver')->count(3)->create();
+        $invite = $invites[0];
+
+        Sanctum::actingAs($user, ['*']);
+        $response = $this->get('/invites/' . $invite->id);
+        
+        $response
+            ->assertOk()
+            ->assertJson(fn (AssertableJson $json) =>
+            $json->hasAll(['id', 'sender', 'receiver', 'project'])
+                ->where('id', $invite->id)
+                ->where('accepted', null)
+                ->etc()
+            );
     }
 }

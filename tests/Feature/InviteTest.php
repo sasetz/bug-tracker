@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\User;
 use Database\Seeders\InviteSeeder;
 use Database\Seeders\ProjectSeeder;
+use Database\Seeders\StatusSeeder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -15,6 +16,14 @@ use Tests\TestCase;
 
 class InviteTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // seed statuses
+        $this->seed(StatusSeeder::class);
+    }
+    
     public function test_create()
     {
         $project = Project::factory()->create();

@@ -46,7 +46,7 @@ class TicketController extends Controller
         $this->authorize('view', $project);
         $data = $request->collect();
 
-        $tickets = Ticket::query();
+        $tickets = $project->tickets();
 
         // search for similar ticket titles
         if ($request->has('title')) {
@@ -202,6 +202,7 @@ class TicketController extends Controller
 
         // status-id
         $ticket->status()->associate(Status::find(1));
+        $ticket->save();
 
         foreach ($request->input('label_ids') as $id) {
             $ticket->labels()->attach(Label::find($id));

@@ -20,7 +20,7 @@ class StoreTicketRequest extends FormRequest
             'label_ids' => 'required|array',
             'label_ids.*' => 'exists:labels,id',
             'assignee_ids' => 'array',
-            'assignee_ids.*' => ['exists:users,id', new InProject($this->route('ticket')->project)],
+            'assignee_ids.*' => ['exists:users,id', new InProject($this->route('project'))],
             'priority_id' => 'required|exists:priorities,id',
         ];
     }

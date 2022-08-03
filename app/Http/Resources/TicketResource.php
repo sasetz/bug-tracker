@@ -10,6 +10,7 @@ use JsonSerializable;
 
 class TicketResource extends JsonResource
 {
+    public static $wrap = '';
     /**
      * Transform the resource into an array.
      *

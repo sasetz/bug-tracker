@@ -85,7 +85,6 @@ class TicketTest extends TestCase
     {
         $user = User::factory()->create();
         $project = Project::factory()->create();
-//        $project->users()->attach($user);
         $label = Label::factory()->for($project, 'project')->create();
         $priority = Priority::factory()->for($project, 'project')->create();
         Sanctum::actingAs($user, ['*']);
@@ -107,6 +106,105 @@ class TicketTest extends TestCase
             'priority_id' => $priority->id,
             // status-id
             'status_id' => 1,
+        ]);
+    }
+
+    public function test_view_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        Sanctum::actingAs($ticket->author, ['*']);
+
+        $response = $this->get('/tickets/' . $ticket->id);
+
+        $response
+            ->assertOk()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->where('name', $ticket->name)
+                ->where('author.id', $ticket->author->id)
+                ->etc());
+    }
+
+    public function test_delete_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        Sanctum::actingAs($ticket->author, ['*']);
+        $ticket_data = $ticket->attributesToArray();
+        
+        $response = $this->delete('/tickets/' . $ticket->id);
+        
+        $response->assertOk();
+        $this->assertDatabaseMissing('tickets', $ticket_data);
+    }
+
+    public function test_add_assignee_to_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        $user = User::factory()->create();
+        $ticket->project->users()->attach($user);
+        Sanctum::actingAs($ticket->author, ['*']);
+        
+        $response = $this->patch('/tickets/' . $ticket->id, [
+            'assignee_ids' => [
+                $user->id,
+            ],
+        ]);
+        
+        $response->assertOk();
+        $this->assertDatabaseHas('ticket_assignees', [
+            'user_id' => $user->id,
+            'ticket_id' => $ticket->id,
+        ]);
+    }
+
+    public function test_remove_assignee_from_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        $user = User::factory()->create();
+        $ticket->project->users()->attach($user);
+        $ticket->assignees()->attach($user);
+        Sanctum::actingAs($ticket->author, ['*']);
+
+        $response = $this->patch('/tickets/' . $ticket->id, [
+            'assignee_ids' => [],
+        ]);
+
+        $response->assertOk();
+        $this->assertDatabaseMissing('ticket_assignees', [
+            'user_id' => $user->id,
+            'ticket_id' => $ticket->id,
+        ]);
+    }
+
+    public function test_user_can_subscribe_to_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        $user = User::factory()->create();
+        $ticket->project->users()->attach($user);
+        Sanctum::actingAs($user, ['*']);
+        
+        $response = $this->patch('/tickets/' . $ticket->id . '/subscribe');
+        
+        $response->assertOk();
+        $this->assertDatabaseHas('ticket_subscriptions', [
+            'user_id' => $user->id,
+            'ticket_id' => $ticket->id,
+        ]);
+    }
+
+    public function test_user_can_unsubscribe_from_ticket()
+    {
+        $ticket = Ticket::factory()->create();
+        $user = User::factory()->create();
+        $ticket->project->users()->attach($user);
+        $ticket->subscribers()->attach($user);
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->patch('/tickets/' . $ticket->id . '/unsubscribe');
+
+        $response->assertOk();
+        $this->assertDatabaseMissing('ticket_subscriptions', [
+            'user_id' => $user->id,
+            'ticket_id' => $ticket->id,
         ]);
     }
 }

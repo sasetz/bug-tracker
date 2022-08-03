@@ -50,7 +50,7 @@ class ProjectTest extends TestCase
     {
         $owner = User::factory()->create();
         $project = Project::factory()->for($owner, 'owner')->create();
-        $project_data = $project->toArray();
+        $project_data = $project->attributesToArray();
         
         Sanctum::actingAs($owner);
         $response = $this->withoutMiddleware('password.confirmed')->delete('/projects/' . $project->id);

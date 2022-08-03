@@ -33,6 +33,15 @@ class ProjectFactory extends Factory
             'owner_id'       => User::factory(),
         ];
     }
+    
+    public function configure()
+    {
+        return $this->afterMaking(function (Project $project) {
+        })->afterCreating(function (Project $project) {
+            // the project owner should be in the project
+            $project->users()->attach($project->owner);
+        });
+    }
 
     /**
      * Indicate that users from the current project can add others

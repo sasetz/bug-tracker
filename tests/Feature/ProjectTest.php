@@ -25,7 +25,7 @@ class ProjectTest extends TestCase
      *
      * @return void
      */
-    public function test_create_project(): void
+    public function test_user_can_create_project(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
@@ -46,7 +46,7 @@ class ProjectTest extends TestCase
      * 
      * @return void
      */
-    public function test_delete_project(): void
+    public function test_user_can_delete_project(): void
     {
         $owner = User::factory()->create();
         $project = Project::factory()->for($owner, 'owner')->create();
@@ -59,7 +59,7 @@ class ProjectTest extends TestCase
         $this->assertDatabaseMissing('projects', $project_data);
     }
 
-    public function test_make_user_admin()
+    public function test_owner_can_make_users_admin()
     {
         $project = Project::factory()->for(User::factory(), 'owner')->create();
         $user = User::factory()->create();

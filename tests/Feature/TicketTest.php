@@ -8,8 +8,6 @@ use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
 use Database\Seeders\StatusSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

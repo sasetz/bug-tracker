@@ -24,7 +24,7 @@ class InviteTest extends TestCase
         $this->seed(StatusSeeder::class);
     }
     
-    public function test_create()
+    public function test_user_can_create_invite()
     {
         $project = Project::factory()->create();
         $owner = $project->owner;
@@ -49,7 +49,7 @@ class InviteTest extends TestCase
      * 
      * @return void
      */
-    public function test_accept(): void
+    public function test_user_can_accept_invite(): void
     {
         $invite = Invite::factory()->create();
         $user = $invite->receiver;
@@ -67,7 +67,7 @@ class InviteTest extends TestCase
      *
      * @return void
      */
-    public function test_accept_foreign_forbidden(): void
+    public function test_user_cannot_accept_foreign_invite(): void
     {
         $invite = Invite::factory()->create();
         $user = User::factory()->create();
@@ -85,7 +85,7 @@ class InviteTest extends TestCase
      *
      * @return void
      */
-    public function test_reject(): void
+    public function test_user_can_reject_invite(): void
     {
         $invite = Invite::factory()->create();
         $user = $invite->receiver;
@@ -103,7 +103,7 @@ class InviteTest extends TestCase
      *
      * @return void
      */
-    public function test_reject_foreign_forbidden(): void
+    public function test_user_cannot_reject_foreign_invite(): void
     {
         $invite = Invite::factory()->create();
         $user = User::factory()->create();
@@ -121,7 +121,7 @@ class InviteTest extends TestCase
      * 
      * @return void
      */
-    public function test_create_to_foreign_project(): void
+    public function test_user_cannot_create_invite_to_foreign_project(): void
     {
         $project = Project::factory()->create();
         $project->users()->attach($project->owner);
@@ -148,7 +148,7 @@ class InviteTest extends TestCase
      * 
      * @return void
      */
-    public function test_create_to_public_project(): void
+    public function test_user_can_create_invite_to_public_project(): void
     {
         $project = Project::factory()->public()->create();
         $project->users()->attach($project->owner);
@@ -177,7 +177,7 @@ class InviteTest extends TestCase
      * 
      * @return void
      */
-    public function test_create_to_private_project(): void
+    public function test_admin_can_create_invite_to_private_project(): void
     {
         $project = Project::factory()->private()->create();
         $project->users()->attach($project->owner);
@@ -201,7 +201,7 @@ class InviteTest extends TestCase
         ]);
     }
 
-    public function test_view_all_invites()
+    public function test_user_can_view_all_invites()
     {
         $user = User::factory()->create();
         $invites = Invite::factory()->for($user, 'receiver')->count(3)->create();
@@ -218,7 +218,7 @@ class InviteTest extends TestCase
             );
     }
 
-    public function test_view_single_invite()
+    public function test_user_can_view_single_invite()
     {
         $user = User::factory()->create();
         $invites = Invite::factory()->for($user, 'receiver')->count(3)->create();

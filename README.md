@@ -17,8 +17,6 @@ This is a personal project that is meant for studying and upgrading my skill set
 - [ ] Add Laravel Sail
 - [ ] Deploy
 
-<p align="center">
-
 ## REST endpoints
 | Method | URL                          |
 |--------|------------------------------|
@@ -49,6 +47,6 @@ This is a personal project that is meant for studying and upgrading my skill set
 | PATCH  | /user                        |
 | GET    | /users/{user}                |
 
-</p>
 ## License
+
 This repository is licensed under [MIT License](https://opensource.org/licenses/MIT)

@@ -25,6 +25,6 @@ class SendInviteReceivedNotification
      */
     public function handle($event)
     {
-        //
+        
     }
 }

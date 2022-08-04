@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\AssigneeChanged;
 use App\Events\CommentPosted;
-use App\Events\LabelChanged;
+use App\Events\LabelsChanged;
 use App\Events\PriorityChanged;
 use App\Events\StatusChanged;
 use App\Events\TitleChanged;
@@ -294,12 +294,12 @@ class TicketController extends Controller
 
             $added->each(function ($item, $key) use ($ticket) {
                 $ticket->labels()->attach($item);
-                LabelChanged::dispatch($item, true);
+                LabelsChanged::dispatch($item, true);
             });
 
             $removed->each(function ($item, $key) use ($ticket) {
                 $ticket->labels()->detach($item);
-                LabelChanged::dispatch($item, false);
+                LabelsChanged::dispatch($item, false);
             });
         }
         if ($request->has('assignee_ids')) {

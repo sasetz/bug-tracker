@@ -30,18 +30,20 @@ class AuthTest extends TestCase
      */
     public function test_registration(): void
     {
-        $request = $this->post('/register', [
-            'name' => 'Jane Doe',
-            'email' => 'testing@gmail.com',
-            'password' => 'VeryComplicatedPassword#2213',
-            'password_confirmation' => 'VeryComplicatedPassword#2213',
-        ]);
+        $user_data = [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'password' => fake()->password(8),
+        ];
+        $user_data['password_confirmation'] = $user_data['password'];
+        
+        $request = $this->post('/register', $user_data);
         
         $request->assertOk();
         $this->assertGuest();
         $this->assertDatabaseHas('users', [
-            'name' => 'Jane Doe',
-            'email' => 'testing@gmail.com',
+            'name' => $user_data['name'],
+            'email' => $user_data['email'],
         ]);
     }
 

@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class TicketController extends Controller
@@ -138,7 +139,7 @@ class TicketController extends Controller
 
         $order = array();
         if($request->has('order_by')) {
-            $data->get('order_by')->each(function ($item, $key) use ($data, $request, $order) {
+            $data->get('order_by')->each(function ($item, $key) use ($data, $request, &$order) {
                 $order_field = 'created_at';
 
                 if($item == 'author') {
@@ -292,30 +293,49 @@ class TicketController extends Controller
             $added = $labels->diff($ticket->labels()->get());
             $removed = $ticket->labels()->get()->diff($labels);
 
-            $added->each(function ($item, $key) use ($ticket) {
+            $event_package = [];
+            $added->each(function ($item, $key) use ($ticket, &$event_package) {
                 $ticket->labels()->attach($item);
-                LabelsChanged::dispatch($item, true);
+                $event_package[] = [
+                    $item,
+                    true,
+                ];
             });
 
-            $removed->each(function ($item, $key) use ($ticket) {
+            $removed->each(function ($item, $key) use ($ticket, &$event_package) {
                 $ticket->labels()->detach($item);
-                LabelsChanged::dispatch($item, false);
+                $event_package[] = [
+                    $item,
+                    false,
+                ];
             });
+            
+            LabelsChanged::dispatch($event_package);
         }
+        
         if ($request->has('assignee_ids')) {
             $assignees = User::whereIn('id', $request->input('assignee_ids'))->get();
             $added = $assignees->diff($ticket->assignees()->get());
             $removed = $ticket->assignees()->get()->diff($assignees);
+            $event_package = [];
 
-            $added->each(function ($item, $key) use ($ticket) {
+            $added->each(function ($item, $key) use (&$event_package, $ticket) {
                 $ticket->assignees()->attach($item);
-                AssigneeChanged::dispatch($item, true);
+                $event_package[] = [
+                    $item,
+                    true,
+                ];
             });
 
-            $removed->each(function ($item, $key) use ($ticket) {
+            $removed->each(function ($item, $key) use (&$event_package, $ticket) {
                 $ticket->assignees()->detach($item);
-                AssigneeChanged::dispatch($item, false);
+                $event_package[] = [
+                    $item,
+                    false,
+                ];
             });
+            
+            AssigneeChanged::dispatch($event_package);
         }
         $ticket->save();
 

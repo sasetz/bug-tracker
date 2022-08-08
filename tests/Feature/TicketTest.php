@@ -2,12 +2,19 @@
 
 namespace Tests\Feature;
 
+use App\Events\AssigneeChanged;
+use App\Events\CommentPosted;
+use App\Events\LabelsChanged;
+use App\Events\PriorityChanged;
+use App\Events\StatusChanged;
+use App\Events\TitleChanged;
 use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
 use Database\Seeders\StatusSeeder;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -29,6 +36,7 @@ class TicketTest extends TestCase
      */
     public function test_user_can_create_tickets(): void
     {
+        Event::fake();
         $user = User::factory()->create();
         $project = Project::factory()->create();
         $project->users()->attach($user);
@@ -55,6 +63,7 @@ class TicketTest extends TestCase
             // status-id
             'status_id' => 1,
         ]);
+        Event::assertDispatched(CommentPosted::class);
     }
 
     public function test_tickets_can_be_searched()
@@ -204,5 +213,39 @@ class TicketTest extends TestCase
             'user_id' => $user->id,
             'ticket_id' => $ticket->id,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_changes_get_recorded(): void
+    {
+        Event::fake();
+        $ticket = Ticket::factory()->create();
+        $priority = Priority::factory()->for($ticket->project, 'project')->create();
+        $labels_init = Label::factory()->for($ticket->project, 'project')->count(3)->create();
+        $labels_new = Label::factory()->for($ticket->project, 'project')->count(3)->create();
+        $labels_new[] = $labels_init[0];
+        $labels_init->each(function ($item, $key) use (&$ticket) {
+            $ticket->labels()->attach($item);
+        });
+        $assignees = User::factory()->hasAttached($ticket->project)->count(3)->create();
+        Sanctum::actingAs($ticket->author, ['*']);
+        
+        $response = $this->withoutMiddleware(['verified'])->patch('/tickets/' . $ticket->id, [
+            'name' => fake()->sentence(3),
+            // status-id
+            'status_id' => 2,
+            'priority_id' => $priority->id,
+            'label_ids' => $labels_new->modelKeys(),
+            'assignee_ids' => $assignees->modelKeys(),
+        ]);
+        
+        $response->assertOk();
+        Event::assertDispatched(TitleChanged::class);
+        Event::assertDispatched(StatusChanged::class);
+        Event::assertDispatched(PriorityChanged::class);
+        Event::assertDispatched(LabelsChanged::class);
+        Event::assertDispatched(AssigneeChanged::class);
     }
 }

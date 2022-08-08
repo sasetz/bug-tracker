@@ -2,26 +2,18 @@
 
 namespace App\Events;
 
-use App\Models\Label;
-use App\Models\LabelChange;
-use App\Models\Ticket;
-use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class LabelsChanged
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
-     * Create a new event instance.
-     *
+     * @param array $update array of records for LabelChange
+     * 
      * @return void
      */
-    public function __construct(public LabelChange $update) {}
+    public function __construct(public array $update) {}
 }

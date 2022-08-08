@@ -2,9 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\AssigneeChange;
-use App\Models\Ticket;
-use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -12,11 +9,11 @@ use Illuminate\Queue\SerializesModels;
 class AssigneeChanged
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
-     * Create a new event instance.
-     *
+     * @param array $update array of records for AssigneeChange
+     * 
      * @return void
      */
-    public function __construct(public AssigneeChange $update) {}
+    public function __construct(public array $update) {}
 }

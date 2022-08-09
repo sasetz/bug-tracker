@@ -53,34 +53,9 @@ class Ticket extends Model
     {
         return $this->belongsToMany(Label::class);
     }
-    
-    public function titleChanges(): HasMany
-    {
-        return $this->hasMany(TitleChange::class);
-    }
-    
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
-    }
-    
-    public function statusChanges(): HasMany
-    {
-        return $this->hasMany(StatusChange::class);
-    }
-    
-    public function priorityChanges(): HasMany
-    {
-        return $this->hasMany(PriorityChange::class);
-    }
-    
-    public function assigneeChanges(): HasMany
-    {
-        return $this->hasMany(AssigneeChange::class);
-    }
 
-    public function labelChanges(): HasMany
+    public function updates(): HasMany
     {
-        return $this->hasMany(LabelChange::class);
+        return $this->hasMany(Update::class);
     }
 }

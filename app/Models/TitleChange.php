@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property User $user
@@ -15,14 +16,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TitleChange extends Model
 {
     use HasFactory;
-    
-    public function user(): BelongsTo
+    public $timestamps = false;
+
+    /**
+     * Relation to the update it represents.
+     *
+     * @return MorphOne
+     */
+    public function ticketUpdate(): MorphOne
     {
-        return $this->belongsTo(User::class);
-    }
-    
-    public function ticket(): BelongsTo
-    {
-        return $this->belongsTo(Ticket::class);
+        return $this->morphOne(Update::class, 'changeable');
     }
 }

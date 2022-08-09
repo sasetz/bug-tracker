@@ -237,6 +237,11 @@ class TicketController extends Controller
         return new TicketResource($ticket);
     }
 
+    public function showUpdates(Ticket $ticket)
+    {
+        
+    }
+
     /**
      * Update the specified resource in storage.
      *

@@ -17,11 +17,8 @@ return new class extends Migration
     {
         Schema::create('status_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignId('old_status_id')->constrained('statuses');
-            $table->foreignId('new_status_id')->constrained('statuses');
-            $table->timestamps();
+            $table->foreignId('old_status_id')->constrained('statuses')->nullOnDelete();
+            $table->foreignId('new_status_id')->constrained('statuses')->nullOnDelete();
         });
     }
 

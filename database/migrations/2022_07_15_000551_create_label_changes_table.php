@@ -18,11 +18,8 @@ return new class extends Migration
     {
         Schema::create('label_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Label::class)->constrained();
-            $table->boolean('new');
-            $table->timestamps();
+            $table->foreignIdFor(Label::class)->constrained()->nullOnDelete();
+            $table->boolean('is_added');
         });
     }
 

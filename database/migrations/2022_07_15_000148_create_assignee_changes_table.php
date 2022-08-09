@@ -17,11 +17,8 @@ return new class extends Migration
     {
         Schema::create('assignee_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignId('assignee_id')->constrained('users');
-            $table->boolean('new');
-            $table->timestamps();
+            $table->foreignId('assignee_id')->constrained('users')->nullOnDelete();
+            $table->boolean('is_added');
         });
     }
 

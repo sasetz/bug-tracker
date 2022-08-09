@@ -17,11 +17,8 @@ return new class extends Migration
     {
         Schema::create('priority_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignId('old_priority_id')->constrained('priorities');
-            $table->foreignId('new_priority_id')->constrained('priorities');
-            $table->timestamps();
+            $table->foreignId('old_priority_id')->constrained('priorities')->nullOnDelete();
+            $table->foreignId('new_priority_id')->constrained('priorities')->nullOnDelete();
         });
     }
 

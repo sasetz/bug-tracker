@@ -5,19 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class PriorityChange extends Model
 {
     use HasFactory;
-    
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+    public $timestamps = false;
 
-    public function ticket(): BelongsTo
+    /**
+     * Relation to the update it represents.
+     *
+     * @return MorphOne
+     */
+    public function ticketUpdate(): MorphOne
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->morphOne(Update::class, 'changeable');
     }
 
     public function oldPriority(): BelongsTo

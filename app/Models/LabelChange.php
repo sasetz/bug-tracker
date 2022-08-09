@@ -5,19 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class LabelChange extends Model
 {
     use HasFactory;
+    
+    public $timestamps = false;
 
-    public function user(): BelongsTo
+    /**
+     * Relation to the update it represents.
+     *
+     * @return MorphOne
+     */
+    public function ticketUpdate(): MorphOne
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function ticket(): BelongsTo
-    {
-        return $this->belongsTo(Ticket::class);
+        return $this->morphOne(Update::class, 'changeable');
     }
 
     public function label(): BelongsTo

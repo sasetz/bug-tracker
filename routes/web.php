@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TicketController;
-use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
@@ -44,39 +43,39 @@ Route::middleware(['auth:sanctum'])->group(function () {
     | SPA Routes
     |--------------------------------------------------------------------------
      */
-    
+
     Route::get('/dashboard', function () {
         return 'React here';
     })->name('dashboard');
-    
+
     Route::get('/confirm-password', function () {
         return 'React here';
     })->name('password.confirm');
-    
+
     /*
     |--------------------------------------------------------------------------
     | Email Verification Routes
     |--------------------------------------------------------------------------
      */
-    
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        $request->fulfill();
-
-        return redirect()->route('dashboard');
-    })->middleware(['signed'])->name('verification.verify');
 
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
 
         return redirect()->route('dashboard');
     })->middleware(['signed'])->name('verification.verify');
-    
+
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect()->route('dashboard');
+    })->middleware(['signed'])->name('verification.verify');
+
     /*
     |--------------------------------------------------------------------------
     | User Rest Routes
     |--------------------------------------------------------------------------
      */
-    
+
     Route::get('/user', [UserController::class, 'self'])->name('user.self');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('user.show');
     Route::patch('/user', [UserController::class, 'update'])
@@ -87,14 +86,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->name('user.destroy');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function() {
-    
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+
     /*
     |--------------------------------------------------------------------------
     | Invites Rest Routes
     |--------------------------------------------------------------------------
      */
-    
+
     Route::get('/invites', [InviteController::class, 'index'])->name('invite.index');
     Route::post('/projects/{project}/invites', [InviteController::class, 'store'])->name('invite.store');
     Route::get('/invites/{invite}', [InviteController::class, 'show'])->name('invite.show');
@@ -107,7 +106,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
     | Projects Rest Routes
     |--------------------------------------------------------------------------
      */
-    
+
     Route::get('/projects', [ProjectController::class, 'index'])->name('project.index');
     Route::post('/projects', [ProjectController::class, 'store'])->name('project.store');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project.show');
@@ -128,6 +127,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function() {
     Route::get('/projects/{project}/tickets', [TicketController::class, 'index'])->name('ticket.index');
     Route::post('/projects/{project}/tickets', [TicketController::class, 'store'])->name('ticket.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('ticket.show');
+    Route::get('/tickets/{ticket}/updates', [TicketController::class, 'showUpdates'])
+        ->name('ticket.show_updates');
     Route::patch('/tickets/{ticket}', [TicketController::class, 'update'])->name('ticket.update');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('ticket.destroy');
     Route::patch('/tickets/{ticket}/subscribe', [TicketController::class, 'subscribe'])

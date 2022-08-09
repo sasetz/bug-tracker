@@ -103,15 +103,15 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps()
             ->as('assigned');
     }
-    
-    public function titleChanges(): HasMany
+
+    /**
+     * A user can make many updates to a ticket.
+     * 
+     * @return HasMany
+     */
+    public function updates(): HasMany
     {
-        return $this->hasMany(TitleChange::class);
-    }
-    
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Update::class);
     }
     
     /*

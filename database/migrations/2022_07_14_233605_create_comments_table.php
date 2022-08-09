@@ -17,10 +17,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
             $table->text('body');
-            $table->timestamps();
         });
     }
 

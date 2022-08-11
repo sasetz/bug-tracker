@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\TicketChanges;
 
+use App\Models\Status;
+use App\Models\Update;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-/**
- * @property User $user
- * @property Ticket $ticket
- * @property string $old
- * @property string $new
- */
-class TitleChange extends Model
+class StatusChange extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    public string $type = 'status';
 
     /**
      * Relation to the update it represents.
@@ -26,5 +23,15 @@ class TitleChange extends Model
     public function ticketUpdate(): MorphOne
     {
         return $this->morphOne(Update::class, 'changeable');
+    }
+    
+    public function oldStatus(): BelongsTo
+    {
+        return $this->belongsTo(Status::class, 'old_status_id');
+    }
+
+    public function newStatus(): BelongsTo
+    {
+        return $this->belongsTo(Status::class, 'new_status_id');
     }
 }

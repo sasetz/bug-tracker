@@ -2,25 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\AssigneeChanged;
-use App\Events\CommentPosted;
-use App\Events\LabelsChanged;
-use App\Events\PriorityChanged;
-use App\Events\StatusChanged;
-use App\Events\TitleChanged;
+use App\Events\NewUpdateCreated;
 use App\Http\Requests\SearchTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
-use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Priority;
-use App\Models\PriorityChange;
 use App\Models\Project;
 use App\Models\Status;
-use App\Models\StatusChange;
 use App\Models\Ticket;
-use App\Models\TitleChange;
+use App\Models\TicketChanges\AssigneeChange;
+use App\Models\TicketChanges\Comment;
+use App\Models\TicketChanges\LabelChange;
+use App\Models\TicketChanges\PriorityChange;
+use App\Models\TicketChanges\StatusChange;
+use App\Models\TicketChanges\TitleChange;
+use App\Models\Update;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -29,7 +27,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class TicketController extends Controller
@@ -206,7 +203,19 @@ class TicketController extends Controller
         $ticket->save();
 
         foreach ($request->input('label_ids') as $id) {
-            $ticket->labels()->attach(Label::find($id));
+            $label = Label::find($id);
+            $ticket->labels()->attach($label);
+            
+            $change = new LabelChange();
+            $change->label()->associate($label);
+            $change->is_added = true;
+            $change->save();
+            
+            $update = new Update();
+            $update->user()->associate($request->user());
+            $update->ticket()->associate($ticket);
+            $update->changeable()->associate($change);
+            $update->save();
         }
         foreach ($request->input('assignee_ids') as $id) {
             $ticket->assignees()->attach(User::find($id));
@@ -214,12 +223,10 @@ class TicketController extends Controller
         $ticket->save();
 
         $comment = new Comment();
-        $comment->user()->associate($request->user());
-        $comment->ticket()->associate($ticket);
         $comment->body = $request->input('message');
         $comment->save();
-
-        CommentPosted::dispatch($comment);
+        
+        $this->create_update($comment, $request->user(), $ticket);
 
         return response('OK');
     }
@@ -255,41 +262,35 @@ class TicketController extends Controller
         $this->authorize('update', $ticket);
         
         if ($request->has('name')) {
-            $title_update = new TitleChange();
-            $title_update->user()->associate($request->user());
-            $title_update->ticket()->associate($ticket);
-            $title_update->old = $ticket->name;
-            $title_update->new = $request->input('name');
-            $title_update->save();
-
+            $title_change = new TitleChange();
+            $title_change->old = $ticket->name;
+            $title_change->new = $request->input('name');
+            $title_change->save();
+            
+            $this->create_update($title_change, $request->user(), $ticket);
+            
             $ticket->name = $request->input('name');
-
-            TitleChanged::dispatch($title_update);
         }
 
         if ($request->has('status_id')) {
-            $status_update = new StatusChange();
-            $status_update->ticket()->associate($ticket);
-            $status_update->user()->associate($request->user());
-            $status_update->oldStatus()->associate($ticket->status);
-            $status_update->newStatus()->associate(Status::find($request->input('status_id')));
-            $status_update->save();
+            $status_change = new StatusChange();
+            $status_change->oldStatus()->associate($ticket->status);
+            $status_change->newStatus()->associate(Status::find($request->input('status_id')));
+            $status_change->save();
 
-            StatusChanged::dispatch($status_update);
-
+            $this->create_update($status_change, $request->user(), $ticket);
+            
             $ticket->status()->associate(Status::find($request->input('status_id')));
         }
 
         if ($request->has('priority_id')) {
-            $priority_update = new PriorityChange();
-            $priority_update->ticket()->associate($ticket);
-            $priority_update->user()->associate($request->user());
-            $priority_update->oldPriority()->associate($ticket->priority);
-            $priority_update->newPriority()->associate(Priority::find($request->input('priority_id')));
-            $priority_update->save();
-
-            PriorityChanged::dispatch($priority_update);
-
+            $priority_change = new PriorityChange();
+            $priority_change->oldPriority()->associate($ticket->priority);
+            $priority_change->newPriority()->associate(Priority::find($request->input('priority_id')));
+            $priority_change->save();
+            
+            $this->create_update($priority_change, $request->user(), $ticket);
+            
             $ticket->priority()->associate(Priority::find($request->input('priority_id')));
         }
 
@@ -298,49 +299,55 @@ class TicketController extends Controller
             $added = $labels->diff($ticket->labels()->get());
             $removed = $ticket->labels()->get()->diff($labels);
 
-            $event_package = [];
-            $added->each(function ($item, $key) use ($ticket, &$event_package) {
+            $added->each(function ($item, $key) use ($request, $ticket) {
                 $ticket->labels()->attach($item);
-                $event_package[] = [
-                    $item,
-                    true,
-                ];
+                
+                $change = new LabelChange();
+                $change->label()->associate($item);
+                $change->is_added = true;
+                $change->save();
+                
+                $this->create_update($change, $request->user(), $ticket);
             });
 
-            $removed->each(function ($item, $key) use ($ticket, &$event_package) {
+            $removed->each(function ($item, $key) use ($request, $ticket) {
                 $ticket->labels()->detach($item);
-                $event_package[] = [
-                    $item,
-                    false,
-                ];
+                
+                $change = new LabelChange();
+                $change->label()->associate($item);
+                $change->is_added = false;
+                $change->save();
+                
+                $this->create_update($change, $request->user(), $ticket);
             });
-            
-            LabelsChanged::dispatch($event_package);
         }
         
         if ($request->has('assignee_ids')) {
             $assignees = User::whereIn('id', $request->input('assignee_ids'))->get();
             $added = $assignees->diff($ticket->assignees()->get());
             $removed = $ticket->assignees()->get()->diff($assignees);
-            $event_package = [];
-
-            $added->each(function ($item, $key) use (&$event_package, $ticket) {
-                $ticket->assignees()->attach($item);
-                $event_package[] = [
-                    $item,
-                    true,
-                ];
-            });
-
-            $removed->each(function ($item, $key) use (&$event_package, $ticket) {
-                $ticket->assignees()->detach($item);
-                $event_package[] = [
-                    $item,
-                    false,
-                ];
-            });
             
-            AssigneeChanged::dispatch($event_package);
+            $added->each(function ($item, $key) use ($request, $ticket) {
+                $ticket->assignees()->attach($item);
+                
+                $change = new AssigneeChange();
+                $change->assignee()->associate($item);
+                $change->is_added = true;
+                $change->save();
+                
+                $this->create_update($change, $request->user(), $ticket);
+            });
+
+            $removed->each(function ($item, $key) use ($request, $ticket) {
+                $ticket->assignees()->detach($item);
+
+                $change = new AssigneeChange();
+                $change->assignee()->associate($item);
+                $change->is_added = false;
+                $change->save();
+
+                $this->create_update($change, $request->user(), $ticket);
+            });
         }
         $ticket->save();
 
@@ -389,5 +396,24 @@ class TicketController extends Controller
         $ticket->subscribers()->detach($request->user());
 
         return response('OK');
+    }
+
+    /**
+     * Generates an Update and returns it.
+     * 
+     * @param $changeable
+     * @param $user
+     * @param $ticket
+     * @return void
+     */
+    private function create_update($changeable, $user, $ticket): void
+    {
+        $update = new Update();
+        $update->user()->associate($user);
+        $update->ticket()->associate($ticket);
+        $update->changeable()->associate($changeable);
+        $update->save();
+
+        NewUpdateCreated::dispatch($update);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\NewUpdateCreated;
 use App\Listeners\SendInviteReceivedNotification;
+use App\Listeners\SendTicketUpdateNotification;
 use App\Notifications\InviteReceived;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         InviteReceived::class => [
             SendInviteReceivedNotification::class,
+        ],
+        NewUpdateCreated::class => [
+            SendTicketUpdateNotification::class,
         ],
     ];
 

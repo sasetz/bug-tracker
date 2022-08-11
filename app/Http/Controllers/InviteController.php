@@ -14,17 +14,11 @@ use Throwable;
 
 class InviteController extends Controller
 {
-    public function __construct()
-    {
-//        $this->authorizeResource(Invite::class, 'invite');
-    }
-
     /**
      * List all received invitations
      *
      * @param Request $request
      * @return AnonymousResourceCollection
-     * @throws AuthorizationException
      */
     public function index(Request $request): AnonymousResourceCollection
     {

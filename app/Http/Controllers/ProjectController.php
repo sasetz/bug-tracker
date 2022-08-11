@@ -16,11 +16,6 @@ use Throwable;
 
 class ProjectController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(Project::class, 'project');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -53,9 +48,11 @@ class ProjectController extends Controller
      *
      * @param Project $project
      * @return ProjectResource
+     * @throws AuthorizationException
      */
     public function show(Project $project): ProjectResource
     {
+        $this->authorize('view', $project);
         return new ProjectResource($project);
     }
 
@@ -65,9 +62,14 @@ class ProjectController extends Controller
      * @param UpdateProjectRequest $request
      * @param Project $project
      * @return Response
+     * @throws AuthorizationException
      */
     public function update(UpdateProjectRequest $request, Project $project): Response
     {
+        $this->authorize('update', $project);
+        
+        $project->fill($request->all());
+        $project->save();
         return response('OK');
     }
 
@@ -80,6 +82,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project): Response
     {
+        $this->authorize('delete', $project);
+        
         $project->deleteOrFail();
         return response('OK');
     }
@@ -93,6 +97,7 @@ class ProjectController extends Controller
      */
     public function users(Project $project): AnonymousResourceCollection
     {
+        $this->authorize('view', $project);
         return UserResource::collection($project->users->get()->concat($project->owner()->get()));
     }
 

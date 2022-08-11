@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\TicketChanges;
 
+use App\Models\Label;
+use App\Models\Update;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class PriorityChange extends Model
+class LabelChange extends Model
 {
     use HasFactory;
+    
     public $timestamps = false;
+    public string $type = 'label';
 
     /**
      * Relation to the update it represents.
@@ -22,13 +26,8 @@ class PriorityChange extends Model
         return $this->morphOne(Update::class, 'changeable');
     }
 
-    public function oldPriority(): BelongsTo
+    public function label(): BelongsTo
     {
-        return $this->belongsTo(Priority::class, 'old_priority_id');
-    }
-
-    public function newPriority(): BelongsTo
-    {
-        return $this->belongsTo(Priority::class, 'new_priority_id');
+        return $this->belongsTo(Label::class);
     }
 }

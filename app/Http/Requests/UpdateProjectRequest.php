@@ -15,7 +15,7 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => 'string',
-            'email' => 'email|unique:users,email',
+            'description' => 'string',
         ];
     }
 }

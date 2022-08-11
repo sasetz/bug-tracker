@@ -8,17 +8,13 @@ use App\Http\Resources\PriorityResource;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Throwable;
 
 class PriorityController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(Priority::class, 'priority');
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -34,12 +30,16 @@ class PriorityController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StorePriorityRequest $request
+     * @param Project $project
      * @return Response
+     * @throws AuthorizationException
      */
-    public function store(StorePriorityRequest $request): Response
+    public function store(StorePriorityRequest $request, Project $project): Response
     {
+        $this->authorize('update', $project);
+        
         $priority = new Priority();
-        $priority->project()->associate(Project::find($request->input('project_id')));
+        $priority->project()->associate($project);
         $priority->fill($request->all());
         $priority->save();
         
@@ -51,9 +51,12 @@ class PriorityController extends Controller
      *
      * @param Priority $priority
      * @return PriorityResource|Response
+     * @throws AuthorizationException
      */
     public function show(Priority $priority): Response|PriorityResource
     {
+        $this->authorize('view', $priority);
+        
         return new PriorityResource($priority);
     }
 
@@ -63,9 +66,11 @@ class PriorityController extends Controller
      * @param UpdatePriorityRequest $request
      * @param Priority $priority
      * @return Response
+     * @throws AuthorizationException
      */
     public function update(UpdatePriorityRequest $request, Priority $priority): Response
     {
+        $this->authorize('update', $priority);
         $priority->fill($request->all());
         $priority->save();
         
@@ -81,6 +86,8 @@ class PriorityController extends Controller
      */
     public function destroy(Priority $priority): Response
     {
+        $this->authorize('delete', $priority);
+        
         $priority->deleteOrFail();
         return response('OK');
     }

@@ -21,7 +21,6 @@ class StorePriorityRequest extends FormRequest
                 'required',
                 new HexColor(),
             ],
-            'project_id' => 'required|exists:projects,id',
         ];
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Comment;
 use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Ticket;
+use App\Models\TicketChanges\Comment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

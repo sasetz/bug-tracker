@@ -2,12 +2,12 @@
 
 namespace App\Events;
 
-use App\Models\StatusChange;
+use App\Models\Update;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class StatusChanged
+class NewUpdateCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -16,5 +16,5 @@ class StatusChanged
      *
      * @return void
      */
-    public function __construct(public StatusChange $update) {}
+    public function __construct(public Update $update) {}
 }

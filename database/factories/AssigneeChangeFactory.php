@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AssigneeChange>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\AssigneeChange>
  */
 class AssigneeChangeFactory extends Factory
 {

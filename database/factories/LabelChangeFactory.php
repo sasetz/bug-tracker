@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\LabelChange>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\LabelChange>
  */
 class LabelChangeFactory extends Factory
 {

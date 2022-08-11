@@ -17,8 +17,8 @@ return new class extends Migration
     {
         Schema::create('status_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('old_status_id')->constrained('statuses')->nullOnDelete();
-            $table->foreignId('new_status_id')->constrained('statuses')->nullOnDelete();
+            $table->foreignId('old_status_id')->nullable()->constrained('statuses')->nullOnDelete();
+            $table->foreignId('new_status_id')->nullable()->constrained('statuses')->nullOnDelete();
         });
     }
 

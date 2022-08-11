@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('updates', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Ticket::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(User::class)->constrained()->nullOnDelete();
+            $table->foreignIdFor(User::class)->nullable()->constrained()->nullOnDelete();
             $table->morphs('changeable');
             $table->timestamps();
         });

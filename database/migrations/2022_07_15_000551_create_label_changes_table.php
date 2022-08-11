@@ -18,7 +18,7 @@ return new class extends Migration
     {
         Schema::create('label_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Label::class)->constrained()->nullOnDelete();
+            $table->foreignIdFor(Label::class)->nullable()->constrained()->nullOnDelete();
             $table->boolean('is_added');
         });
     }

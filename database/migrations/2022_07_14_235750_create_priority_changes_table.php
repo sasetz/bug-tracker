@@ -17,8 +17,8 @@ return new class extends Migration
     {
         Schema::create('priority_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('old_priority_id')->constrained('priorities')->nullOnDelete();
-            $table->foreignId('new_priority_id')->constrained('priorities')->nullOnDelete();
+            $table->foreignId('old_priority_id')->nullable()->constrained('priorities')->nullOnDelete();
+            $table->foreignId('new_priority_id')->nullable()->constrained('priorities')->nullOnDelete();
         });
     }
 

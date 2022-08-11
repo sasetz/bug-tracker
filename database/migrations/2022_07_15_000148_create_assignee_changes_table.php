@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('assignee_changes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assignee_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('assignee_id')->nullable()->constrained('users')->nullOnDelete();
             $table->boolean('is_added');
         });
     }

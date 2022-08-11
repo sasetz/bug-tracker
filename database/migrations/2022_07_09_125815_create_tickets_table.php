@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('name');
             // local id inside the project
             $table->integer('number');
-            $table->foreignId('author_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('priority_id')->constrained()->nullOnDelete();
+            $table->foreignId('priority_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('status_id')->constrained();
             $table->timestamps();
         });

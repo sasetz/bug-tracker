@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\LabelController;
+use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -135,4 +138,47 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('ticket.subscribe');
     Route::patch('/tickets/{ticket}/unsubscribe', [TicketController::class, 'unsubscribe'])
         ->name('ticket.unsubscribe');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Status Rest Routes
+    |--------------------------------------------------------------------------
+     */
+
+    Route::get('/statuses', [StatusController::class, 'index'])->name('status.index');
+    Route::get('/statuses/{status}', [StatusController::class, 'show'])->name('status.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Priority Rest Routes
+    |--------------------------------------------------------------------------
+     */
+
+    Route::get('/projects/{project}/priorities', [PriorityController::class, 'index'])
+        ->name('priority.index');
+    Route::post('/projects/{project}/priorities', [PriorityController::class, 'store'])
+        ->name('priority.store');
+    Route::get('/priorities/{priority}', [PriorityController::class, 'show'])
+        ->name('priority.show');
+    Route::patch('/priorities/{priority}', [PriorityController::class, 'update'])
+        ->name('priority.update');
+    Route::delete('/priorities/{priority}', [PriorityController::class, 'destroy'])
+        ->name('priority.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Label Rest Routes
+    |--------------------------------------------------------------------------
+     */
+
+    Route::get('/projects/{project}/labels', [LabelController::class, 'index'])
+        ->name('priority.index');
+    Route::post('/projects/{project}/labels', [LabelController::class, 'store'])
+        ->name('label.store');
+    Route::get('/labels/{label}', [LabelController::class, 'show'])
+        ->name('label.show');
+    Route::patch('/labels/{label}', [LabelController::class, 'update'])
+        ->name('label.update');
+    Route::delete('/labels/{label}', [LabelController::class, 'destroy'])
+        ->name('label.destroy');
 });

@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UpdateResource extends JsonResource
 {
+    public static $wrap = '';
     /**
      * Transform the resource into an array.
      *
@@ -17,8 +18,6 @@ class UpdateResource extends JsonResource
     {
         return [
             'user' => new UserResource($this->user),
-            'ticket' => new TicketResource($this->ticket),
-            'project' => new ProjectResource($this->ticket->project),
             'type' => $this->changeable->type, // type of the change
             'data' => $this->changeable, // automatically generate resource, nothing additional is needed
         ];

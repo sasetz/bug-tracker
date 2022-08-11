@@ -16,6 +16,7 @@ class PrioritySeeder extends Seeder
      */
     public function run()
     {
+        $this->call(StatusSeeder::class);
         Priority::factory()
             ->count(7)
             ->for(Project::factory())

@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\TicketChanges;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\PriorityChange>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\Comment>
  */
-class PriorityChangeFactory extends Factory
+class CommentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class PriorityChangeFactory extends Factory
     public function definition()
     {
         return [
-            // contains only dynamic relations
+            'body' => fake()->text(),
         ];
     }
 }

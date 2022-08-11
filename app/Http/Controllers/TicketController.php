@@ -7,6 +7,7 @@ use App\Http\Requests\SearchTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
+use App\Http\Resources\UpdateResource;
 use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Project;
@@ -244,9 +245,17 @@ class TicketController extends Controller
         return new TicketResource($ticket);
     }
 
-    public function showUpdates(Ticket $ticket)
+    /**
+     * Shows paginated updates for a specific ticket.
+     * 
+     * @param Ticket $ticket
+     * @return AnonymousResourceCollection
+     * @throws AuthorizationException
+     */
+    public function showUpdates(Ticket $ticket): AnonymousResourceCollection
     {
-        
+        $this->authorize('view', $ticket);
+        return UpdateResource::collection($ticket->updates()->latest()->paginate());
     }
 
     /**
@@ -399,7 +408,7 @@ class TicketController extends Controller
     }
 
     /**
-     * Generates an Update and returns it.
+     * Helper method, generates an Update and dispatches an update event.
      * 
      * @param $changeable
      * @param $user

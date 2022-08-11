@@ -15,6 +15,7 @@ class LabelSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(StatusSeeder::class);
         Label::factory()
             ->count(5)
             ->for(Project::factory())

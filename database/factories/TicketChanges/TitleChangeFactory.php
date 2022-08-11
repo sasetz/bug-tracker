@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\TicketChanges;
 
+use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,5 +21,11 @@ class TitleChangeFactory extends Factory
             'old' => fake()->sentence(),
             'new' => fake()->sentence(),
         ];
+    }
+
+    public function makeTicketRelations(mixed $change, Ticket $ticket): void
+    {
+        $ticket->name = $change->new;
+        $ticket->save();
     }
 }

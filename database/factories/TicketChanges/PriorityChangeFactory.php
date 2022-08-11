@@ -1,13 +1,15 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\TicketChanges;
 
+use App\Models\Priority;
+use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\AssigneeChange>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TicketChanges\PriorityChange>
  */
-class AssigneeChangeFactory extends Factory
+class PriorityChangeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +19,6 @@ class AssigneeChangeFactory extends Factory
     public function definition()
     {
         return [
-            'new' => fake()->boolean(),
         ];
     }
 }

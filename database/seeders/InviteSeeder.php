@@ -18,6 +18,7 @@ class InviteSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(StatusSeeder::class);
         $projects = Project::factory()->count(3)->has(User::factory()->count(3))->create();
 
         foreach ($projects as $project) {

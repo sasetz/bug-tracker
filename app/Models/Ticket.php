@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /* @property integer $id
  * @property string $name
  * @property integer $number
+ * @property User $author
+ * @property Project $project
+ * @property Priority $priority
+ * @property Status $status
+ * @property Collection $subscribers
+ * @property Collection $assignees
+ * @property Collection $labels
+ * @property Collection $updates
  * @property mixed $created_at
  * @property mixed $updated_at
  */

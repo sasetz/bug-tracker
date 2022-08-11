@@ -2,22 +2,20 @@
 
 namespace Tests\Feature;
 
-use App\Events\AssigneeChanged;
-use App\Events\CommentPosted;
-use App\Events\LabelsChanged;
-use App\Events\PriorityChanged;
-use App\Events\StatusChanged;
-use App\Events\TitleChanged;
+use App\Events\NewUpdateCreated;
 use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Project;
 use App\Models\Ticket;
 use App\Models\User;
 use Database\Seeders\StatusSeeder;
+use Database\Seeders\TicketChanges\CommentSeeder;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Webmozart\Assert\Assert;
 
 class TicketTest extends TestCase
 {
@@ -63,7 +61,7 @@ class TicketTest extends TestCase
             // status-id
             'status_id' => 1,
         ]);
-        Event::assertDispatched(CommentPosted::class);
+        Event::assertDispatched(NewUpdateCreated::class);
     }
 
     public function test_tickets_can_be_searched()
@@ -136,9 +134,9 @@ class TicketTest extends TestCase
         $ticket = Ticket::factory()->create();
         Sanctum::actingAs($ticket->author, ['*']);
         $ticket_data = $ticket->attributesToArray();
-        
+
         $response = $this->delete('/tickets/' . $ticket->id);
-        
+
         $response->assertOk();
         $this->assertDatabaseMissing('tickets', $ticket_data);
     }
@@ -149,13 +147,13 @@ class TicketTest extends TestCase
         $user = User::factory()->create();
         $ticket->project->users()->attach($user);
         Sanctum::actingAs($ticket->author, ['*']);
-        
+
         $response = $this->patch('/tickets/' . $ticket->id, [
             'assignee_ids' => [
                 $user->id,
             ],
         ]);
-        
+
         $response->assertOk();
         $this->assertDatabaseHas('ticket_assignees', [
             'user_id' => $user->id,
@@ -188,9 +186,9 @@ class TicketTest extends TestCase
         $user = User::factory()->create();
         $ticket->project->users()->attach($user);
         Sanctum::actingAs($user, ['*']);
-        
+
         $response = $this->patch('/tickets/' . $ticket->id . '/subscribe');
-        
+
         $response->assertOk();
         $this->assertDatabaseHas('ticket_subscriptions', [
             'user_id' => $user->id,
@@ -231,21 +229,40 @@ class TicketTest extends TestCase
         });
         $assignees = User::factory()->hasAttached($ticket->project)->count(3)->create();
         Sanctum::actingAs($ticket->author, ['*']);
-        
+
+        $name = fake()->sentence(3);
         $response = $this->withoutMiddleware(['verified'])->patch('/tickets/' . $ticket->id, [
-            'name' => fake()->sentence(3),
+            'name' => $name,
             // status-id
             'status_id' => 2,
             'priority_id' => $priority->id,
             'label_ids' => $labels_new->modelKeys(),
             'assignee_ids' => $assignees->modelKeys(),
         ]);
-        
+
         $response->assertOk();
-        Event::assertDispatched(TitleChanged::class);
-        Event::assertDispatched(StatusChanged::class);
-        Event::assertDispatched(PriorityChanged::class);
-        Event::assertDispatched(LabelsChanged::class);
-        Event::assertDispatched(AssigneeChanged::class);
+        $this->assertDatabaseHas('tickets', [
+            'id' => $ticket->id,
+            'name' => $name,
+            'status_id' => 2,
+            'priority_id' => $priority->id,
+        ]);
+        Event::assertDispatched(NewUpdateCreated::class);
+    }
+
+    public function test_can_view_updates_of_a_ticket()
+    {
+        $this->seed(CommentSeeder::class);
+        $user = User::query()
+            ->whereHas('projects.tickets.updates')->first();
+        $ticket = $user->projects()->whereHas('tickets')->first()->tickets()->whereHas('updates')->first();
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->get('/tickets/' . $ticket->id . '/updates');
+
+        $response->assertOk();
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('data.0')
+            ->etc());
     }
 }

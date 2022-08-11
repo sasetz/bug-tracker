@@ -2,10 +2,19 @@
 
 namespace App\Models;
 
+use App\Http\Resources\ProjectResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/* @property integer $id
+ * @property boolean $accepted
+ * @property User $user
+ * @property User $receiver
+ * @property Project $project
+ * @property mixed $created_at
+ * @property mixed $updated_at
+ */
 class Invite extends Model
 {
     use HasFactory;

@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/* @property integer $id
+ * @property Ticket $ticket
+ * @property User $user
+ * @property mixed $changeable
+ * @property mixed $created_at
+ * @property mixed $updated_at
+ */
 class Update extends Model
 {
     use HasFactory;

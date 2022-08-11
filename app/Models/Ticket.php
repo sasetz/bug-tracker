@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/* @property integer $id
+ * @property string $name
+ * @property integer $number
+ * @property mixed $created_at
+ * @property mixed $updated_at
+ */
 class Ticket extends Model
 {
     use HasFactory;

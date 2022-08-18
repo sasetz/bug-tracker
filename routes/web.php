@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\LabelController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StatusController;
@@ -181,4 +182,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         ->name('label.update');
     Route::delete('/labels/{label}', [LabelController::class, 'destroy'])
         ->name('label.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Label Rest Routes
+    |--------------------------------------------------------------------------
+     */
+
+    Route::get('/notifications', [NotificationController::class, 'index'])
+        ->name('notification.index');
+    Route::get('/notifications/unread', [NotificationController::class, 'unread'])
+        ->name('notification.unread');
 });
